@@ -22,22 +22,23 @@ enum Center {
 	NONE
 };
 
-//définition des typedef
+//dÃ©finition des typedef
 typedef std::array<int, 2> Card;
 typedef std::vector<Card> Pack;
 typedef std::vector<Card> Hand;
 typedef std::map<Card, sf::Sprite> CardSprite;
 typedef std::array<sf::Sprite, 5> BackCardSprite;
+typedef std::array<int, 2> Contract;
 
 //fonctions
 
-//fonction qui renvoie la carte cliquée, prend en paramètre : 
-// - la fenêtre
-// - la main concernée
+//fonction qui renvoie la carte cliquÃ©e, prend en paramÃ¨tre : 
+// - la fenÃªtre
+// - la main concernÃ©e
 // - l'origine de dessin de la main
-// - un booléen représentant si oui ou non la main est verticale
+// - un boolÃ©en reprÃ©sentant si oui ou non la main est verticale
 Card clicked(sf::RenderWindow const& w, Hand h, sf::Vector2i o, bool rotation = 0) {
-	sf::Vector2i pos = sf::Mouse::getPosition(w); //récupère la position de la souris par rapport à la fenêtre
+	sf::Vector2i pos = sf::Mouse::getPosition(w); //rÃ©cupÃ¨re la position de la souris par rapport Ã  la fenÃªtre
 	bool x = 0, y = 0;
 	if (!rotation) {
 		if ((o.x <= pos.x) && ((o.x + (h.size() - 1) * 14 + CARD_WIDTH) >= pos.x)) x = 1;
@@ -69,7 +70,7 @@ Card clicked(sf::RenderWindow const& w, Hand h, sf::Vector2i o, bool rotation = 
 
 		return h[i];
 	}
-	else { // renvoi par défaut
+	else { // renvoi par dÃ©faut
 		Card c;
 		c[0] = -1;
 		c[1] = -1;
@@ -113,7 +114,7 @@ std::array<Hand, 4> deal() {
 		c[1] = i % 13;
 		pack.push_back(c);
 	}
-	//Mélange
+	//MÃ©lange
 	for (int i = 51; i >= 0; i--) {
 		std::vector<Card>::iterator it = pack.begin();
 		int j = (i != 0) ? (rand() % i) : 0;
@@ -133,9 +134,9 @@ std::array<Hand, 4> deal() {
 	return hands;
 }
 
-//affiche une main, prends en paramètre :
-// - la fenêtre
-// - la main à afficher
+//affiche une main, prends en paramÃ¨tre :
+// - la fenÃªtre
+// - la main Ã  afficher
 // - le dictionnaire de cartes
 // - l'origine de dessin
 // - est ce que la main subit une rotation ?
@@ -154,6 +155,10 @@ void showHand(sf::RenderWindow & w, Hand const& h, CardSprite const& cs, std::ar
 			w.draw(s);
 		}
 	}
+}
+
+void showContract(Contract const& c) {
+	
 }
 
 void showCenter(sf::RenderWindow & w, std::map<Center, Card> toDraw, CardSprite const& cs, Center draw) {
@@ -181,7 +186,7 @@ void showCenter(sf::RenderWindow & w, std::map<Center, Card> toDraw, CardSprite 
 	w.draw(s);
 }
 
-//renvoie les coordonnées de l'origine de la main, prends les mains et l'indice de la main voulue
+//renvoie les coordonnÃ©es de l'origine de la main, prends les mains et l'indice de la main voulue
 sf::Vector2i coordHand(std::array<Hand , 4> const& hands, int i) {
 	sf::Vector2i v;
 	int x, y;
@@ -217,9 +222,13 @@ int main()
 	std::array<Hand, 4> hands = deal();
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
-	sf::Texture table, cards;
+	sf::Texture table, cards, symbols;
 	sf::Sprite sprite;
 	Card def = { -1, -1 };
+	Contract contract = {5, 6};
+	sf::Font cl;
+	sf::Text scoreText;
+	
 	
 	//importation des images (sous forme de texture)
 	if (!table.loadFromFile("wood1.jpg")) {
@@ -228,26 +237,43 @@ int main()
 	if (!cards.loadFromFile("cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
+	if (!symbols.loadFromFile("symbols.png")) {
 	
-	//paramétrage des textures
+	}
+	
+	//importation des polices
+	if(!cl.loadFromFile("Font/CL.ttf")) {
+		std::cout << "Police pas trouvee ?" << std::endl;
+	}
+	
+	//paramÃ©trage des textures
 	table.setRepeated(true);
 	table.setSmooth(true);
 	cards.setSmooth(true);
+	symbols.setSmooth(true);
 	
-	//on prépare les dictionnaires
+	//on prÃ©pare les dictionnaires
 	CardSprite cardsSprite;
 	initCards(cards, cardsSprite);
 
 	BackCardSprite backCardsackSprite;
 	initBackCards(cards, backCardsackSprite);
 	
-	//on prépare le sprite du fond
+	//on prÃ©pare le sprite du fond
 	sprite.setTexture(table);
 	sprite.setTextureRect(sf::IntRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT));
 	
-	//boucle principale de la fenêtre
+	
+	//paramÃ©trage du texte
+	scoreText.setFont(cl);
+	scoreText.setString("Nord/Sud : " + std::to_string(0) + "\nEst/Ouest : " + std::to_string(0));
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setCharacterSize(12);
+	scoreText.setStyle(sf::Text::Bold);
+		
+	//boucle principale de la fenÃªtre
 	while (window.isOpen()) {
-		//on efface la fenêtre à chaque fois et on redessine le fond
+		//on efface la fenÃªtre Ã  chaque fois et on redessine le fond
 		window.clear(sf::Color::Black);
 		window.draw(sprite);
 		
@@ -257,12 +283,12 @@ int main()
 			showHand(window, hands[i], cardsSprite, { v.x, v.y }, i % 2);
 		}
 		
-		//boucle d'évènements
+		//boucle d'Ã©vÃ¨nements
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
 				window.close();
-			// vérifie si une main est cliquée et prépare l'affichage
+			// vÃ©rifie si une main est cliquÃ©e et prÃ©pare l'affichage
 			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
 				for (int i = 0; i < 4; i++) {
 					c[i] = clicked(window, hands[i], coordHand(hands, i), i % 2);
@@ -290,14 +316,16 @@ int main()
 			}
 		}
 		
-		//affiche la carte cliquée au centre
+		//affiche la carte cliquÃ©e au centre
 		for(int i = 0; i < 4; i++) {
 			if(draw[i] != NONE || d) {
 				showCenter(window, toDraw, cardsSprite, draw[i]);
 				d = true;
 			}
 		}
-
+		
+		window.draw(scoreText);
+		
 		window.display();
 	}
 
