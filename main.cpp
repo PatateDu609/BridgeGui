@@ -28,6 +28,7 @@ typedef std::vector<Card> Pack;
 typedef std::vector<Card> Hand;
 typedef std::map<Card, sf::Sprite> CardSprite;
 typedef std::array<sf::Sprite, 5> BackCardSprite;
+typedef std::array<int, 2> Contract;
 
 //fonctions
 
@@ -156,6 +157,10 @@ void showHand(sf::RenderWindow & w, Hand const& h, CardSprite const& cs, std::ar
 	}
 }
 
+void showContract(Contract const& c) {
+	
+}
+
 void showCenter(sf::RenderWindow & w, std::map<Center, Card> toDraw, CardSprite const& cs, Center draw) {
 	sf::Sprite s = cs.at(toDraw[draw]);
 	
@@ -217,9 +222,13 @@ int main()
 	std::array<Hand, 4> hands = deal();
 	sf::RenderWindow window;
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
-	sf::Texture table, cards;
+	sf::Texture table, cards, symbols;
 	sf::Sprite sprite;
 	Card def = { -1, -1 };
+	Contract contract = {5, 6};
+	sf::Font cl;
+	sf::Text scoreText;
+	
 	
 	//importation des images (sous forme de texture)
 	if (!table.loadFromFile("wood1.jpg")) {
@@ -228,11 +237,20 @@ int main()
 	if (!cards.loadFromFile("cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
+	if (!symbols.loadFromFile("symbols.png")) {
+	
+	}
+	
+	//importation des polices
+	if(!cl.loadFromFile("Font/CL.ttf")) {
+		std::cout << "Police pas trouvee ?" << std::endl;
+	}
 	
 	//paramétrage des textures
 	table.setRepeated(true);
 	table.setSmooth(true);
 	cards.setSmooth(true);
+	symbols.setSmooth(true);
 	
 	//on prépare les dictionnaires
 	CardSprite cardsSprite;
@@ -245,6 +263,14 @@ int main()
 	sprite.setTexture(table);
 	sprite.setTextureRect(sf::IntRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT));
 	
+	
+	//paramétrage du texte
+	scoreText.setFont(cl);
+	scoreText.setString("Nord/Sud : " + std::to_string(0) + "\nEst/Ouest : " + std::to_string(0));
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setCharacterSize(12);
+	scoreText.setStyle(sf::Text::Bold);
+		
 	//boucle principale de la fenêtre
 	while (window.isOpen()) {
 		//on efface la fenêtre à chaque fois et on redessine le fond
@@ -297,7 +323,9 @@ int main()
 				d = true;
 			}
 		}
-
+		
+		window.draw(scoreText);
+		
 		window.display();
 	}
 
