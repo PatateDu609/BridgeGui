@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <SFML/Graphics.hpp>
-#include "Cards.h"
+#include "Game.h"
 
 int main()
 {
@@ -22,10 +22,10 @@ int main()
 	sf::Texture table, cards, symbols;
 	sf::Sprite sprite;
 	cards::Card def = { -1, -1 };
-	cards::Contract contract = { 5, 6 };
+	game::Contract contract = { 5, 6 };
 	sf::Font cl;
 	sf::Text scoreText;
-	
+
 	//importation des images (sous forme de texture)
 	if (!table.loadFromFile("wood1.jpg")) {
 		std::cout << "Image pas trouvee ?" << std::endl;
@@ -88,7 +88,7 @@ int main()
 				for (int i = 0; i < 4; i++) {
 					c[i] = cards::clicked(window, hands[i], cards::coordHand(window, hands, i), i % 2);
 
-					if (c[i] != def) {
+					if (c[i] != def && draw[i] == cards::Center::NONE) {
 						if (i == 0) {
 							draw[i] = cards::Center::NORTH;
 						}

@@ -52,7 +52,7 @@ cards::Card cards::clicked(sf::RenderWindow const& w, cards::Hand h, sf::Vector2
 	}
 }
 
-//fonctions pour initialiser le dictionnaire de sprite
+//fonctions pour initialiser les dictionnairesde sprite
 void cards::initCards(sf::Texture const& t, cards::Sprite &cs) {
 	sf::Sprite s;
 	s.setTexture(t);
@@ -184,8 +184,4 @@ sf::Vector2i cards::coordHand(sf::RenderWindow const& w, std::array<cards::Hand,
 		break;
 	}
 	return v;
-}
-
-void cards::showContract(cards::Contract const& c) {
-
 }
