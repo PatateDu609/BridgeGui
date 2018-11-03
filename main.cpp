@@ -144,7 +144,6 @@ int main()
 				if (draw[i] != cards::Center::NONE || d) {
 					showCenter(window, toDraw, cardsSprite, draw[i]);
 					d = true;
-					window.draw(cardsSprite[winner]);
 				}
 			}
 
