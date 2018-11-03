@@ -52,7 +52,7 @@ cards::Card cards::clicked(sf::RenderWindow const& w, cards::Hand h, sf::Vector2
 	}
 }
 
-//fonctions pour initialiser les dictionnairesde sprite
+//fonctions pour initialiser les dictionnaires de sprite
 void cards::initCards(sf::Texture const& t, cards::Sprite &cs) {
 	sf::Sprite s;
 	s.setTexture(t);
@@ -72,6 +72,18 @@ void cards::initBackCards(sf::Texture const & t, cards::BackSprite &bs) {
 	for (int i = 0; i < 5; i++) {
 		s.setTextureRect(sf::IntRect(i * CARD_WIDTH, 4 * CARD_HEIGHT, CARD_WIDTH, CARD_HEIGHT));
 		bs[i] = s;
+	}
+}
+
+void cards::initSymbols(sf::Texture const& t, cards::Symbols &s) {
+	sf::Sprite s0;
+	s0.setTexture(t);
+
+	for (int i = 0; i < 4; i++) {
+		s0.setTextureRect(sf::IntRect(0, i * 512, 512, 512));
+		s0.setScale(0.03f, 0.03f);
+		s0.setColor((i % 2) ? sf::Color::Black : sf::Color::Red);
+		s[i] = s0;
 	}
 }
 
