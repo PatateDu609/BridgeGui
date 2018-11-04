@@ -12,6 +12,7 @@ namespace game {
 	typedef std::array<int, 2> Score;
 
 	void showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font const& f, game::Contract const& c);
+	void showWhoPlay(sf::RenderWindow & w, int turn, sf::Vector2i ch);
 	cards::Card compare(Symbols color, int contract, cards::Card const& a, cards::Card const& b);
 	bool playable(Symbols & color, cards::Hand const& h, cards::Card const& c);
 }

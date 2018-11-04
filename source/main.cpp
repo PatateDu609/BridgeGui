@@ -28,6 +28,8 @@ int main()
 	int iWinner;
 	int turn = 0, k = 0;
 	game::Symbols color = game::Symbols::NONE;
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
 
 	for (int i = 0; i < 4; i++) draw.push_back(cards::Center::NONE);
 
@@ -84,6 +86,7 @@ int main()
 		window.draw(spriteBackground);
 
 		game::showContract(window, s, cl, contract);
+		game::showWhoPlay(window, turn, cards::coordHand(window, hands, turn));
 		
 		for (int coups = 0; coups < 13; coups++) {
 			//dessin des mains

@@ -7,6 +7,9 @@
 #include <map>
 #include <SFML/Graphics.hpp>
 
+#define CARD_WIDTH 56
+#define CARD_HEIGHT 74
+
 namespace cards {
 	enum Center {NORTH, WEST, SOUTH, EAST, NONE};
 

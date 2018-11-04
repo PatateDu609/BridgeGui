@@ -48,6 +48,51 @@ void game::showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font 
 	w.draw(s0);
 }
 
+
+void game::showWhoPlay(sf::RenderWindow & w, int turn, sf::Vector2i ch) {
+	int width = 20, height = 40, gap = 5, hTriangle = height * 0.50f, x, y;
+	auto size = w.getSize();
+	sf::ConvexShape triangle;
+	sf::RectangleShape rect(sf::Vector2f(width, height));
+	triangle.setPointCount(3);
+	triangle.setPoint(0, sf::Vector2f(width / 2 + gap, 0.f));
+	triangle.setPoint(1, sf::Vector2f(0.f, hTriangle));
+	triangle.setPoint(2, sf::Vector2f(width + 2 * gap, hTriangle));
+	
+	switch(turn) {
+	case 0:
+		x = (size.x + 2*gap + width) / 2;
+		y = ch.y + 20 + CARD_HEIGHT;
+		rect.setPosition(sf::Vector2f(x + gap, y + hTriangle));
+		break;
+	case 1:
+		x = ch.x + 20 + CARD_WIDTH;
+		y = (size.y + height + hTriangle) / 2;
+		rect.setPosition(sf::Vector2f(x + hTriangle, y - gap));
+		break;
+	case 2:
+		x = (size.x + 2*gap + width) / 2;
+		y = ch.y - 20;
+		rect.setPosition(sf::Vector2f(x - gap, y - hTriangle));
+		break;
+	case 3:
+		x = ch.x - 20 - CARD_HEIGHT;
+		y = (size.y + height + hTriangle) / 2;
+		rect.setPosition(sf::Vector2f(x - hTriangle, y + gap));
+		break;
+	}
+	
+	triangle.setFillColor(sf::Color(232, 133, 118));
+	rect.setFillColor(sf::Color(232, 133, 118));
+	
+	triangle.setRotation(-90.f * turn);
+	rect.setRotation(-90.f * turn);
+	triangle.setPosition(sf::Vector2f(x, y));
+	
+	w.draw(triangle);
+	w.draw(rect);
+}
+
 cards::Card game::compare(game::Symbols color, int contract, cards::Card const& a, cards::Card const& b) {
 	cards::Card c;
 	int x = a[0] - b[0], y = a[1] - b[1];
