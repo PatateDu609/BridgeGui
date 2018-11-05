@@ -6,13 +6,14 @@
 #include <cstdlib>
 #include <ctime>
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "Game.h"
 
 int main()
 {
 	//initialisation des variables
 	std::vector<cards::Center> draw;
-	bool d = false;
+	bool d = false, begin = true;
 	std::array<cards::Card, 4> c;
 	std::map<cards::Center, cards::Card> toDraw;
 	std::array<cards::Hand, 4> hands = cards::deal();
@@ -23,31 +24,32 @@ int main()
 	game::Contract contract = { game::Symbols::DIAMOND, 6, cards::Center::NORTH };
 	game::Score score = {0, 0};
 	sf::Font cl;
-	sf::Text scoreText;
+	sf::Text scoreText, end;
 	cards::Card winner, temp;
 	int iWinner;
 	int turn = 0, k = 0;
 	game::Symbols color = game::Symbols::NONE;
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
+	sf::Event event;
 
 	for (int i = 0; i < 4; i++) draw.push_back(cards::Center::NONE);
 
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
 
 	//importation des images (sous forme de texture)
-	if (!table.loadFromFile("../Images/wood1.jpg")) {
+	if (!table.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/wood1.jpg")) {
 		std::cout << "Image pas trouvee ?" << std::endl;
 	}
-	if (!cards.loadFromFile("../Images/cards.png")) {
+	if (!cards.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
-	if (!symbols.loadFromFile("../Images/symbols.png")) {
+	if (!symbols.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/symbols.png")) {
         std::cout << "Image pas trouvee ???" << std::endl;
 	}
 
 	//importation des polices
-	if (!cl.loadFromFile("../Font/CL.ttf")) {
+	if (!cl.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Font/CL.ttf")) {
 		std::cout << "Police pas trouvee ?" << std::endl;
 	}
 	
@@ -79,6 +81,12 @@ int main()
 	scoreText.setStyle(sf::Text::Bold);
 	scoreText.setPosition(sf::Vector2f(WINDOW_WIDTH * 0.01, WINDOW_HEIGHT * 0.01));
 	
+	end.setFont(cl);
+	end.setFillColor(sf::Color::White);
+	end.setCharacterSize(24);
+	end.setStyle(sf::Text::Bold);
+	end.setPosition(sf::Vector2f((WINDOW_WIDTH - 200)/ 2, 50));
+	
 	//boucle principale de la fenêtre
 	while (window.isOpen()) {
 		//on efface la fenêtre à chaque fois et on redessine le fond
@@ -86,82 +94,94 @@ int main()
 		window.draw(spriteBackground);
 
 		game::showContract(window, s, cl, contract);
-		game::showWhoPlay(window, turn, cards::coordHand(window, hands, turn));
 		
-		for (int coups = 0; coups < 13; coups++) {
-			//dessin des mains
-			for (int i = 0; i < 4; i++) {
-				sf::Vector2i v = cards::coordHand(window, hands, i);
-				cards::showHand(window, hands[i], cardsSprite, { v.x, v.y }, i % 2);
-			}
+		if(begin) {
+			game::showWhoPlay(window, turn, cards::coordHand(window, hands, turn));
+			for (int coups = 0; coups < 13; coups++) {
+				//dessin des mains
+				for (int i = 0; i < 4; i++) {
+					sf::Vector2i v = cards::coordHand(window, hands, i);
+					cards::showHand(window, hands[i], cardsSprite, backCardSprite, { v.x, v.y }, i, turn, i % 2);
+				}
 
-			//boucle d'évènements
-			sf::Event event;
-			while (window.pollEvent(event)) {
-				if (event.type == sf::Event::Closed)
-					window.close();
-				// vérifie si une main est cliquée et prépare l'affichage
-				// interdit l'affichage si la main est non jouable et si ce n'est pas le tour du joueur
-				if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-					for (int i = 0; i < 4; i++) {
-						c[i] = cards::clicked(window, hands[i], cards::coordHand(window, hands, i), i % 2);
+				//boucle d'évènements
+				while (window.pollEvent(event)) {
+					if (event.type == sf::Event::Closed)
+						window.close();
+					// vérifie si une main est cliquée et prépare l'affichage
+					// interdit l'affichage si la main est non jouable et si ce n'est pas le tour du joueur
+					if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+						for (int i = 0; i < 4; i++) {
+							c[i] = cards::clicked(window, hands[i], cards::coordHand(window, hands, i), i % 2);
 
-						if (c[i] != def && draw[i] == cards::Center::NONE && turn == i) {
-							if (game::playable(color, hands[i], c[i])) {
-								if (i == 0) draw[i] = cards::Center::NORTH;
-								else if (i == 1) draw[i] = cards::Center::WEST;
-								else if (i == 2) draw[i] = cards::Center::SOUTH;
-								else if (i == 3) draw[i] = cards::Center::EAST;
+							if (c[i] != def && draw[i] == cards::Center::NONE && turn == i) {
+								if (game::playable(color, hands[i], c[i])) {
+									if (i == 0) draw[i] = cards::Center::NORTH;
+									else if (i == 1) draw[i] = cards::Center::WEST;
+									else if (i == 2) draw[i] = cards::Center::SOUTH;
+									else if (i == 3) draw[i] = cards::Center::EAST;
 
-								toDraw[draw[i]] = c[i];
+									toDraw[draw[i]] = c[i];
 
-								cards::Hand::iterator h = std::find(std::begin(hands[i]), std::end(hands[i]), c[i]);
-								hands[i].erase(h);
+									cards::Hand::iterator h = std::find(std::begin(hands[i]), std::end(hands[i]), c[i]);
+									hands[i].erase(h);
 
-								--turn;
-								turn = (turn < 0) ? 3 : turn;
+									--turn;
+									turn = (turn < 0) ? 3 : turn;
 
-								++k;
-								if (k == 1) {
-									winner = c[i];
-									iWinner = i;
+									++k;
+									if (k == 1) {
+										winner = c[i];
+										iWinner = i;
+									}
+									temp = game::compare(color, contract[0], winner, c[i]);
+
+									if (temp != winner) iWinner = i;
+
+									winner = temp;
+
+									break;
 								}
-								temp = game::compare(color, contract[0], winner, c[i]);
-
-								if (temp != winner) iWinner = i;
-
-								winner = temp;
-
-								break;
 							}
-						}
-						else {
-							draw.push_back(cards::Center::NONE);
+							else {
+								draw.push_back(cards::Center::NONE);
+							}
 						}
 					}
 				}
-			}
 
-			//affiche la carte cliquée au centre
-			for (int i = 0; i < 4; i++) {
-				if (draw[i] != cards::Center::NONE || d) {
-					showCenter(window, toDraw, cardsSprite, draw[i]);
-					d = true;
+				//affiche la carte cliquée au centre
+				for (int i = 0; i < 4; i++) {
+					if (draw[i] != cards::Center::NONE || d) {
+						showCenter(window, toDraw, cardsSprite, draw[i]);
+						d = true;
+					}
 				}
-			}
 
-			if (k == 4) {
-				++score[iWinner % 2];
-				scoreText.setString("Nord/Sud : " + std::to_string(score[0]) + "\nEst/Ouest : " + std::to_string(score[1]));
-				turn = iWinner;
-				k = 0;
-				d = 0;
-				color = game::Symbols::NONE;
-				for (int i = 0; i < 4; i++) draw[i] = cards::Center::NONE;
-			}
+				if (k == 4) {
+					++score[iWinner % 2];
+					scoreText.setString("Nord/Sud : " + std::to_string(score[0]) + "\nEst/Ouest : " + std::to_string(score[1]));
+					turn = iWinner;
+					k = 0;
+					d = 0;
+					color = game::Symbols::NONE;
+					for (int i = 0; i < 4; i++) draw[i] = cards::Center::NONE;
+				}
+				
+				if(score[0] + score[1] == 13) begin = false;
 
-			window.draw(scoreText);
+				window.draw(scoreText);
+			}
+		} 
+		else {
+			while (window.pollEvent(event))
+					if (event.type == sf::Event::Closed)
+						window.close();
+			std::string win = (score[0] > score[1]) ? "Nord/Sud" : "Est/Ouest";
+			end.setString("Fin de la partie!\n Equipe " + win);
+			window.draw(end);
 		}
+		
 		window.display();
 	}
 

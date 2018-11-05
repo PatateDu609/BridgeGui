@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CARDS_H
 #define CARDS_H
 
@@ -28,7 +27,7 @@ namespace cards {
 
 	std::array<Hand, 4> deal();
 
-	void showHand(sf::RenderWindow & w, Hand const& h, Sprite const& cs, std::array<int, 2> origin, bool rotate);
+	void showHand(sf::RenderWindow & w, Hand const& h, Sprite const& cs, BackSprite const& bs, std::array<int, 2> origin, int actual, int owner, bool rotate);
 	void showCenter(sf::RenderWindow & w, std::map<Center, Card> toDraw, Sprite const& cs, Center draw);
 	sf::Vector2i coordHand(sf::RenderWindow const& w, std::array<Hand, 4> const& hands, int i);
 }
