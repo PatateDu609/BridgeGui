@@ -40,7 +40,54 @@ void game::showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font 
 		return;
 	}
 	else levees.setString(std::to_string(c[1]));
-	
+
+	sf::Sprite s0 = s[c[0]];
+	s0.setPosition(sf::Vector2f(width * 0.99 - 512 * 0.03, height * 0.01));
+	w.draw(owner);
+	w.draw(levees);
+	w.draw(s0);
+}
+
+void game::showContract(sf::RenderTexture & w, cards::Symbols const& s, sf::Font const& f, game::Contract const& c) {
+	int width = w.getSize().x,
+		height = w.getSize().y;
+
+	sf::Text levees, owner;
+	owner.setFont(f);
+	owner.setCharacterSize(12);
+	owner.setFillColor(sf::Color::White);
+	owner.setStyle(sf::Text::Bold);
+	owner.setPosition(sf::Vector2f(width * 0.99, height * 0.01));
+
+	levees.setFont(f);
+	levees.setCharacterSize(12);
+	levees.setFillColor(sf::Color::White);
+	levees.setStyle(sf::Text::Bold);
+	levees.setPosition(sf::Vector2f(width * 0.99 - 512 * 0.02 - owner.getCharacterSize(), height * 0.01));
+
+	switch (c[2]) {
+	case cards::Center::EAST:
+		owner.setString("E");
+		break;
+	case cards::Center::NORTH:
+		owner.setString("N");
+		break;
+	case cards::Center::SOUTH:
+		owner.setString("S");
+		break;
+	case cards::Center::WEST:
+		owner.setString("W");
+		break;
+	}
+
+	if (c[0] == game::Symbols::NT) {
+		levees.setString("NT" + std::to_string(c[1]));
+		w.draw(levees);
+		w.draw(owner);
+		return;
+	}
+	else levees.setString(std::to_string(c[1]));
+
 	sf::Sprite s0 = s[c[0]];
 	s0.setPosition(sf::Vector2f(width * 0.99 - 512 * 0.03, height * 0.01));
 	w.draw(owner);
@@ -155,4 +202,54 @@ bool game::playable(Symbols & color, cards::Hand const& h, cards::Card const& c)
 		}
 		return true;
 	}
+}
+
+void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& color) {
+	sf::Vector2u size = w.getSize();
+	sf::RectangleShape rect(sf::Vector2f(size.x / 2, size.y / 2));
+	rect.setOrigin(size.x / 4, size.y / 4);
+	rect.setPosition(size.x / 2, size.y / 2);
+	rect.setFillColor(sf::Color(4, 0, 33));
+	w.draw(rect);
+
+	std::array<sf::Text, 4> players;
+	players[0].setString("West");
+	players[1].setString("Nord");
+	players[2].setString("East");
+	players[3].setString("South");
+
+	for (int i = 0; i < 4; i++) {
+		players[i].setFont(f);
+		players[i].setCharacterSize(18);
+		players[i].setFillColor(sf::Color::White);
+		players[i].setStyle(sf::Text::Bold);
+
+		sf::FloatRect playersRect = players[i].getLocalBounds();
+		players[i].setOrigin(playersRect.left + playersRect.width / 2, playersRect.top + playersRect.height / 2);
+		players[i].setPosition(sf::Vector2f((i * size.x / 8) + (size.x * 0.04 + 18 + size.x / 4), size.y / 4 + 18));
+		w.draw(players[i]);
+	}
+
+
+}
+
+bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game::ContractSprite & cs) {
+	sf::RenderTexture texture;
+	if (!texture.create(512 * 0.02 - 12, 0.03f * 512)) return 0;
+
+	sf::Text levees;
+	levees.setFillColor(sf::Color::White);
+	levees.setFont(f);
+	levees.setCharacterSize(12);
+	levees.setStyle(sf::Text::Bold);
+
+
+	for (int i = 1; i < 8; i++) {
+		levees.setString(std::to_string(i));
+		for(int i = 0; i < 5; i++) {
+			
+		}
+	}
+
+	texture.clear(sf::Color::Transparent);
 }

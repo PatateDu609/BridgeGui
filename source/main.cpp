@@ -13,7 +13,7 @@ int main()
 {
 	//initialisation des variables
 	std::vector<cards::Center> draw;
-	bool d = false, begin = true;
+	bool d = false, begin = true, billing = true;
 	std::array<cards::Card, 4> c;
 	std::map<cards::Center, cards::Card> toDraw;
 	std::array<cards::Hand, 4> hands = cards::deal();
@@ -38,18 +38,18 @@ int main()
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
 
 	//importation des images (sous forme de texture)
-	if (!table.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/wood1.jpg")) {
+	if (!table.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/wood1.jpg")) {
 		std::cout << "Image pas trouvee ?" << std::endl;
 	}
-	if (!cards.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/cards.png")) {
+	if (!cards.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
-	if (!symbols.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Images/symbols.png")) {
+	if (!symbols.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/symbols.png")) {
         std::cout << "Image pas trouvee ???" << std::endl;
 	}
 
 	//importation des polices
-	if (!cl.loadFromFile("/home/boucettaghali/Prog/BridgeGui_local/Font/CL.ttf")) {
+	if (!cl.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Font/CL.ttf")) {
 		std::cout << "Police pas trouvee ?" << std::endl;
 	}
 	
@@ -85,7 +85,6 @@ int main()
 	end.setFillColor(sf::Color::White);
 	end.setCharacterSize(24);
 	end.setStyle(sf::Text::Bold);
-	end.setPosition(sf::Vector2f((WINDOW_WIDTH - 200)/ 2, 50));
 	
 	//boucle principale de la fenêtre
 	while (window.isOpen()) {
@@ -93,9 +92,9 @@ int main()
 		window.clear(sf::Color::Black);
 		window.draw(spriteBackground);
 
-		game::showContract(window, s, cl, contract);
-		
-		if(begin) {
+		if(begin && billing) {
+			game::showContract(window, s, cl, contract);
+
 			game::showWhoPlay(window, turn, cards::coordHand(window, hands, turn));
 			for (int coups = 0; coups < 13; coups++) {
 				//dessin des mains
@@ -172,13 +171,22 @@ int main()
 
 				window.draw(scoreText);
 			}
-		} 
+		}
+		else if (!billing && begin) {
+			while (window.pollEvent(event))
+				if (event.type == sf::Event::Closed)
+					window.close();
+			game::showBidding(window, cl, color);
+		}
 		else {
 			while (window.pollEvent(event))
 					if (event.type == sf::Event::Closed)
 						window.close();
 			std::string win = (score[0] > score[1]) ? "Nord/Sud" : "Est/Ouest";
-			end.setString("Fin de la partie!\n Equipe " + win);
+			end.setString("Fin de la partie!\nEquipe " + win);
+			sf::FloatRect textRect = end.getLocalBounds();
+			end.setOrigin(textRect.left + textRect.width / 2, textRect.top + textRect.height / 2);
+			end.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 			window.draw(end);
 		}
 		
