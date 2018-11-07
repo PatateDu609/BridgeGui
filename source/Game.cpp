@@ -186,8 +186,6 @@ void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& c
 			sp.setPosition(sf::Vector2f((i * size.x / 16) + ((10 * size.x / 33)), (j * size.y / 16) +(size.x / 4) + 18));
 			w.draw(sp);
 		}
-
-
 }
 
 bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game::ContractTexture & cs) {

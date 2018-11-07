@@ -181,7 +181,6 @@ int main()
 				if (event.type == sf::Event::Closed)
 					window.close();
 			game::showBidding(window, cl, color, contractsBidding);
-			window.draw(sf::Sprite(t));
 		}
 		else {
 			while (window.pollEvent(event))
