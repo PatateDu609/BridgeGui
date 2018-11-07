@@ -13,7 +13,7 @@ int main()
 {
 	//initialisation des variables
 	std::vector<cards::Center> draw;
-	bool d = false, begin = true, billing = true;
+	bool d = false, begin = true, billing = false;
 	std::array<cards::Card, 4> c;
 	std::map<cards::Center, cards::Card> toDraw;
 	std::array<cards::Hand, 4> hands = cards::deal();
@@ -72,6 +72,10 @@ int main()
 
 	cards::Symbols s;
 	cards::initSymbols(symbols, s);
+
+	game::ContractTexture contractsBidding;
+	std::cout << game::initContractSprite(s, cl, contractsBidding) << std::endl;
+	sf::Texture t(contractsBidding[{0, 4}]);
 
 	//paramétrage du texte
 	scoreText.setFont(cl);
@@ -176,7 +180,8 @@ int main()
 			while (window.pollEvent(event))
 				if (event.type == sf::Event::Closed)
 					window.close();
-			game::showBidding(window, cl, color);
+			game::showBidding(window, cl, color, contractsBidding);
+			window.draw(sf::Sprite(t));
 		}
 		else {
 			while (window.pollEvent(event))

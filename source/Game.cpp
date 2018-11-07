@@ -48,54 +48,6 @@ void game::showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font 
 	w.draw(s0);
 }
 
-void game::showContract(sf::RenderTexture & w, cards::Symbols const& s, sf::Font const& f, game::Contract const& c) {
-	int width = w.getSize().x,
-		height = w.getSize().y;
-
-	sf::Text levees, owner;
-	owner.setFont(f);
-	owner.setCharacterSize(12);
-	owner.setFillColor(sf::Color::White);
-	owner.setStyle(sf::Text::Bold);
-	owner.setPosition(sf::Vector2f(width * 0.99, height * 0.01));
-
-	levees.setFont(f);
-	levees.setCharacterSize(12);
-	levees.setFillColor(sf::Color::White);
-	levees.setStyle(sf::Text::Bold);
-	levees.setPosition(sf::Vector2f(width * 0.99 - 512 * 0.02 - owner.getCharacterSize(), height * 0.01));
-
-	switch (c[2]) {
-	case cards::Center::EAST:
-		owner.setString("E");
-		break;
-	case cards::Center::NORTH:
-		owner.setString("N");
-		break;
-	case cards::Center::SOUTH:
-		owner.setString("S");
-		break;
-	case cards::Center::WEST:
-		owner.setString("W");
-		break;
-	}
-
-	if (c[0] == game::Symbols::NT) {
-		levees.setString("NT" + std::to_string(c[1]));
-		w.draw(levees);
-		w.draw(owner);
-		return;
-	}
-	else levees.setString(std::to_string(c[1]));
-
-	sf::Sprite s0 = s[c[0]];
-	s0.setPosition(sf::Vector2f(width * 0.99 - 512 * 0.03, height * 0.01));
-	w.draw(owner);
-	w.draw(levees);
-	w.draw(s0);
-}
-
-
 void game::showWhoPlay(sf::RenderWindow & w, int turn, sf::Vector2i ch) {
 	int width = 20, height = 40, gap = 5, hTriangle = height * 0.50f, x, y;
 	auto size = w.getSize();
@@ -204,17 +156,13 @@ bool game::playable(Symbols & color, cards::Hand const& h, cards::Card const& c)
 	}
 }
 
-void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& color) {
+void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& color, ContractTexture const& cs) {
 	sf::Vector2u size = w.getSize();
-	sf::RectangleShape rect(sf::Vector2f(size.x / 2, size.y / 2));
-	rect.setOrigin(size.x / 4, size.y / 4);
-	rect.setPosition(size.x / 2, size.y / 2);
-	rect.setFillColor(sf::Color(4, 0, 33));
-	w.draw(rect);
+	sf::Texture t;
 
 	std::array<sf::Text, 4> players;
 	players[0].setString("West");
-	players[1].setString("Nord");
+	players[1].setString("North");
 	players[2].setString("East");
 	players[3].setString("South");
 
@@ -230,26 +178,72 @@ void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& c
 		w.draw(players[i]);
 	}
 
+	sf::Sprite sp;
+	for (int i = 0; i < 7; i++)
+		for (int j = 0; j < 5; j++) {
+			t = cs.at({ i, j });
+			sp = sf::Sprite(t);
+			sp.setPosition(sf::Vector2f((i * size.x / 16) + ((10 * size.x / 33)), (j * size.y / 16) +(size.x / 4) + 18));
+			w.draw(sp);
+		}
+
 
 }
 
-bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game::ContractSprite & cs) {
+bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game::ContractTexture & cs) {
 	sf::RenderTexture texture;
-	if (!texture.create(512 * 0.02 - 12, 0.03f * 512)) return 0;
 
-	sf::Text levees;
-	levees.setFillColor(sf::Color::White);
+	sf::Text levees, nt;
+	levees.setFillColor(sf::Color::Black);
 	levees.setFont(f);
 	levees.setCharacterSize(12);
 	levees.setStyle(sf::Text::Bold);
 
+	nt.setFillColor(sf::Color::Black);
+	nt.setFont(f);
+	nt.setCharacterSize(12);
+	nt.setStyle(sf::Text::Bold);
+	nt.setString("NT");
 
-	for (int i = 1; i < 8; i++) {
-		levees.setString(std::to_string(i));
-		for(int i = 0; i < 5; i++) {
-			
+	sf::FloatRect rect;
+	sf::Sprite symbol;
+
+	for (int l = 1; l < 8; l++) {
+		levees.setString(std::to_string(l));
+
+		rect = levees.getGlobalBounds();
+		if (!texture.create(rect.left + rect.width + 0.03 * 512, rect.top + rect.height + 0.03 * 512)) return 0;
+		for(int si = 0; si < 5; si++) {
+			texture.clear(sf::Color::Transparent);
+			if (si < 4) {
+				switch (si) {
+				case 0:
+					symbol = s[0];
+					symbol.setColor(sf::Color::Black);
+					break;
+				case 1:
+					symbol = s[3];
+					symbol.setColor(sf::Color::Red);
+					break;
+				case 2:
+					symbol = s[2];
+					break;
+				case 3:
+					symbol = s[1];
+					break;
+				}
+				symbol.setPosition(sf::Vector2f(rect.left + rect.width, 0));
+				texture.draw(symbol);
+			}
+			else {
+				nt.setPosition(sf::Vector2f(rect.left + rect.width, 0));
+				texture.draw(nt);
+			}
+			texture.draw(levees);
+			texture.display();
+			cs[{l - 1, si}] = texture.getTexture();
 		}
 	}
 
-	texture.clear(sf::Color::Transparent);
+	return 1;
 }
