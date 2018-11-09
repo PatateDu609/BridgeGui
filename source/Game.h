@@ -2,11 +2,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <array>
 #include "Cards.h"
 
 namespace game {
-	enum Symbols { NONE = -1, SPADE = 0, HEART = 1, DIAMOND = 2, CLUB = 3, NT = 4 };
+	enum Symbols { NONE = -1, NT = 0, SPADE = 1, HEART = 2, DIAMOND = 3, CLUB = 4 };
 
 	typedef std::array<int, 3> Contract;
 	typedef std::array<int, 2> Score;
@@ -20,6 +19,8 @@ namespace game {
 	cards::Card compare(Symbols color, int contract, cards::Card const& a, cards::Card const& b);
 	bool playable(Symbols & color, cards::Hand const& h, cards::Card const& c);
 	void showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& color, ContractTexture const& cs);
+	
+	bool checkValidity(Contract const& first, Contract const& second);
 }
 
 #endif

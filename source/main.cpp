@@ -3,10 +3,6 @@
 #define WINDOW_HEIGHT 600
 
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <SFML/Graphics.hpp>
-#include <string>
 #include "Game.h"
 
 int main()
@@ -21,7 +17,7 @@ int main()
 	sf::Texture table, cards, symbols;
 	sf::Sprite spriteBackground;
 	cards::Card def = { -1, -1 };
-	game::Contract contract = { game::Symbols::DIAMOND, 6, cards::Center::NORTH };
+	game::Contract contract = { game::Symbols::DIAMOND, 6, cards::Center::NORTH }, a = { game::Symbols::HEART, 7, cards::Center::NORTH }, b = { game::Symbols::HEART, 6, cards::Center::NORTH };
 	game::Score score = {0, 0};
 	sf::Font cl;
 	sf::Text scoreText, end;
@@ -74,7 +70,7 @@ int main()
 	cards::initSymbols(symbols, s);
 
 	game::ContractTexture contractsBidding;
-	std::cout << game::initContractSprite(s, cl, contractsBidding) << std::endl;
+	game::initContractSprite(s, cl, contractsBidding);
 	sf::Texture t(contractsBidding[{0, 4}]);
 
 	//paramétrage du texte

@@ -1,5 +1,4 @@
 #include "Game.h"
-#include <iostream>
 
 void game::showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font const& f, game::Contract const& c) {
 	int width = w.getSize().x,
@@ -10,7 +9,7 @@ void game::showContract(sf::RenderWindow & w, cards::Symbols const& s, sf::Font 
 	owner.setCharacterSize(12);
 	owner.setFillColor(sf::Color::White);
 	owner.setStyle(sf::Text::Bold);
-	owner.setPosition(sf::Vector2f(width * 0.99, height * 0.01));
+	owner.setPosition(sf::Vector2f(width * 0.99f, height * 0.01f));
 
 	levees.setFont(f);
 	levees.setCharacterSize(12);
@@ -161,10 +160,10 @@ void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& c
 	sf::Texture t;
 
 	std::array<sf::Text, 4> players;
-	players[0].setString("West");
-	players[1].setString("North");
-	players[2].setString("East");
-	players[3].setString("South");
+	players[0].setString("Ouest");
+	players[1].setString("Nord");
+	players[2].setString("Est");
+	players[3].setString("Sud");
 
 	for (int i = 0; i < 4; i++) {
 		players[i].setFont(f);
@@ -183,11 +182,44 @@ void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& c
 		for (int j = 0; j < 5; j++) {
 			t = cs.at({ i, j });
 			sp = sf::Sprite(t);
-			sp.setPosition(sf::Vector2f((i * size.x / 16) + ((10 * size.x / 33)), (j * size.y / 16) +(size.x / 4) + 18));
+			sp.setPosition(sf::Vector2f((i * size.x / 16) + ((10 * size.x / 33)), (j * size.y / 16) + (size.x / 4) + 18));
 			w.draw(sp);
 		}
 
-	sf::Text buttons
+	std::array<sf::Text, 3> buttons;
+	buttons[0].setString("Contrer");
+	buttons[1].setString("Passer");
+	buttons[2].setString("Surcontrer");
+	std::array<sf::RectangleShape, 3> rectButtons;
+
+	for (int i = 0; i < 3; i++) {
+		buttons[i].setFont(f);
+		buttons[i].setCharacterSize(18);
+		buttons[i].setFillColor(sf::Color::White);
+		buttons[i].setStyle(sf::Text::Bold);
+
+		sf::FloatRect buttonsRect = buttons[i].getLocalBounds();
+		rectButtons[i] = sf::RectangleShape(sf::Vector2f(size.x / 6, 30));
+		rectButtons[i].setFillColor(sf::Color(100, 100, 100));
+		rectButtons[i].setOutlineThickness(2.f);
+		rectButtons[i].setOutlineColor(sf::Color::Black);
+
+		buttons[i].setPosition(sf::Vector2f((i * size.x / 6) + (10 * size.x / 33), (6 * size.y / 16) + (size.y / 4) + 18));
+		rectButtons[i].setPosition(sf::Vector2f((i * size.x / 6) + (10 * size.x / 33) - size.x / 25, (6 * size.y / 16) + (size.y / 4) + 18));
+		w.draw(rectButtons[i]);
+		w.draw(buttons[i]);
+	}
+}
+
+bool game::checkValidity(game::Contract const& first, game::Contract const& second) {
+	int fc = first[0], fl = first[1],
+		sc = second[0], sl = second[1];
+	if (fc == sc) {
+		if (fl > sl) return false;
+		else return true;
+	}
+	else if (fc < sc) return false;
+	else return true;
 }
 
 bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game::ContractTexture & cs) {
@@ -218,18 +250,18 @@ bool game::initContractSprite(cards::Symbols const& s, sf::Font const & f, game:
 			if (si < 4) {
 				switch (si) {
 				case 0:
-					symbol = s[0];
-					symbol.setColor(sf::Color::Black);
+					symbol = s[1];
 					break;
 				case 1:
+					symbol = s[2];
+					break;
+				case 2:
 					symbol = s[3];
 					symbol.setColor(sf::Color::Red);
 					break;
-				case 2:
-					symbol = s[2];
-					break;
 				case 3:
-					symbol = s[1];
+					symbol = s[0];
+					symbol.setColor(sf::Color::Black);
 					break;
 				}
 				symbol.setPosition(sf::Vector2f(rect.left + rect.width, 0));

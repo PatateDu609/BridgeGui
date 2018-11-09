@@ -12,7 +12,7 @@ cards::Card cards::clicked(sf::RenderWindow const& w, cards::Hand h, sf::Vector2
 	sf::Vector2i pos = sf::Mouse::getPosition(w); //récupère la position de la souris par rapport à la fenêtre
 	bool x = 0, y = 0;
 	if (!rotation) {
-		if ((o.x <= pos.x) && ((o.x + (h.size() - 1) * 14 + CARD_WIDTH) >= pos.x)) x = 1;
+		if ((o.x <= pos.x) && ((o.x + (h.size() - 1u) * 14u + CARD_WIDTH) >= pos.x)) x = 1;
 		if (o.y <= pos.y && pos.y <= (o.y + CARD_HEIGHT)) y = 1;
 	}
 	else {
@@ -159,10 +159,10 @@ void cards::showCenter(sf::RenderWindow & w, std::map<cards::Center, cards::Card
 	int gap;
 	switch (draw) {
 	case NORTH:
-		gap = -CARD_HEIGHT / 2;
+		gap = CARD_HEIGHT / -2;
 		break;
 	case WEST:
-		gap = -CARD_HEIGHT / 2;
+		gap = CARD_HEIGHT / -2;
 		break;
 	case SOUTH:
 		gap = CARD_HEIGHT / 2;
