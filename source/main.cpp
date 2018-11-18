@@ -34,18 +34,18 @@ int main()
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
 
 	//importation des images (sous forme de texture)
-	if (!table.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/wood1.jpg")) {
+	if (!table.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/wood1.jpg")) {
 		std::cout << "Image pas trouvee ?" << std::endl;
 	}
-	if (!cards.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/cards.png")) {
+	if (!cards.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
-	if (!symbols.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Images/symbols.png")) {
+	if (!symbols.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/symbols.png")) {
         std::cout << "Image pas trouvee ???" << std::endl;
 	}
 
 	//importation des polices
-	if (!cl.loadFromFile("C:/Users/azuz/source/repos/SFML_test/SFML_test/Font/CL.ttf")) {
+	if (!cl.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Font/CL.ttf")) {
 		std::cout << "Police pas trouvee ?" << std::endl;
 	}
 	
