@@ -34,21 +34,21 @@ int main()
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Bridge");
 
 	//importation des images (sous forme de texture)
-	if (!table.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/wood1.jpg")) {
+	if (!table.loadFromFile("/home/boucettaghali/Prog/BridgeGuiLocal/Images/wood1.jpg")) {
 		std::cout << "Image pas trouvee ?" << std::endl;
 	}
-	if (!cards.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/cards.png")) {
+	if (!cards.loadFromFile("/home/boucettaghali/Prog/BridgeGuiLocal/Images/cards.png")) {
 		std::cout << "Image pas trouvee ??" << std::endl;
 	}
-	if (!symbols.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Images/symbols.png")) {
+	if (!symbols.loadFromFile("/home/boucettaghali/Prog/BridgeGuiLocal/Images/symbols.png")) {
         std::cout << "Image pas trouvee ???" << std::endl;
 	}
 
 	//importation des polices
-	if (!cl.loadFromFile("D:/Workspace/C++/SFML_test/SFML_test/Font/CL.ttf")) {
+	if (!cl.loadFromFile("/home/boucettaghali/Prog/BridgeGuiLocal/Font/CL.ttf")) {
 		std::cout << "Police pas trouvee ?" << std::endl;
 	}
-	
+
 	//paramétrage des textures
 	table.setRepeated(true);
 	table.setSmooth(true);
@@ -58,7 +58,7 @@ int main()
 	//on prépare le sprite du fond
 	spriteBackground.setTexture(table);
 	spriteBackground.setTextureRect(sf::IntRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
-	
+
 	//on prépare les dictionnaires
 	cards::Sprite cardsSprite;
 	cards::initCards(cards, cardsSprite);
@@ -80,12 +80,12 @@ int main()
 	scoreText.setCharacterSize(12);
 	scoreText.setStyle(sf::Text::Bold);
 	scoreText.setPosition(sf::Vector2f(WINDOW_WIDTH * 0.01, WINDOW_HEIGHT * 0.01));
-	
+
 	end.setFont(cl);
 	end.setFillColor(sf::Color::White);
 	end.setCharacterSize(24);
 	end.setStyle(sf::Text::Bold);
-	
+
 	//boucle principale de la fenêtre
 	while (window.isOpen()) {
 		//on efface la fenêtre à chaque fois et on redessine le fond
@@ -166,7 +166,7 @@ int main()
 					color = game::Symbols::NONE;
 					for (int i = 0; i < 4; i++) draw[i] = cards::Center::NONE;
 				}
-				
+
 				if(score[0] + score[1] == 13) begin = false;
 
 				window.draw(scoreText);
@@ -189,7 +189,7 @@ int main()
 			end.setPosition(sf::Vector2f(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 			window.draw(end);
 		}
-		
+
 		window.display();
 	}
 

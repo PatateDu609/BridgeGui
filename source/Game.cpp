@@ -56,7 +56,7 @@ void game::showWhoPlay(sf::RenderWindow & w, int turn, sf::Vector2i ch) {
 	triangle.setPoint(0, sf::Vector2f(width / 2 + gap, 0.f));
 	triangle.setPoint(1, sf::Vector2f(0.f, hTriangle));
 	triangle.setPoint(2, sf::Vector2f(width + 2 * gap, hTriangle));
-	
+
 	switch(turn) {
 	case 0:
 		x = (size.x + 2*gap + width) / 2;
@@ -79,14 +79,14 @@ void game::showWhoPlay(sf::RenderWindow & w, int turn, sf::Vector2i ch) {
 		rect.setPosition(sf::Vector2f(x - hTriangle, y + gap));
 		break;
 	}
-	
+
 	triangle.setFillColor(sf::Color(232, 133, 118));
 	rect.setFillColor(sf::Color(232, 133, 118));
-	
+
 	triangle.setRotation(-90.f * turn);
 	rect.setRotation(-90.f * turn);
 	triangle.setPosition(sf::Vector2f(x, y));
-	
+
 	w.draw(triangle);
 	w.draw(rect);
 }
@@ -100,7 +100,7 @@ cards::Card game::compare(game::Symbols color, int contract, cards::Card const& 
 		bcontract = (b[0] == contract);
 
 	if (x == 0 && ac) {
-		if (a[1] == 0 || b[1] == 0) { //règle le cas de l'as
+		if (a[1] == 0 || b[1] == 0) { //rï¿½gle le cas de l'as
 			if (a[1] == 0) c = a;
 			if (b[1] == 0) c = b;
 		}
@@ -116,7 +116,7 @@ cards::Card game::compare(game::Symbols color, int contract, cards::Card const& 
 	}
 	else if (x == 0 && !ac) {
 		if (acontract) {
-			if (a[1] == 0 || b[1] == 0) { //règle le cas de l'as
+			if (a[1] == 0 || b[1] == 0) { //rï¿½gle le cas de l'as
 				if (a[1] == 0) c = a;
 				if (b[1] == 0) c = b;
 			}
@@ -186,29 +186,25 @@ void game::showBidding(sf::RenderWindow & w, sf::Font const& f, Symbols const& c
 			w.draw(sp);
 		}
 
-	std::array<sf::Text, 3> buttons;
-	buttons[0].setString("Contrer");
-	buttons[1].setString("Passer");
-	buttons[2].setString("Surcontrer");
-	std::array<sf::RectangleShape, 3> rectButtons;
+	sf::Text pass;
+	pass.setString("Passer");
+	sf::RectangleShape rectPass;
 
-	for (int i = 0; i < 3; i++) {
-		buttons[i].setFont(f);
-		buttons[i].setCharacterSize(18);
-		buttons[i].setFillColor(sf::Color::White);
-		buttons[i].setStyle(sf::Text::Bold);
+	pass.setFont(f);
+	pass.setCharacterSize(18);
+	pass.setFillColor(sf::Color::White);
+	pass.setStyle(sf::Text::Bold);
 
-		sf::FloatRect buttonsRect = buttons[i].getLocalBounds();
-		rectButtons[i] = sf::RectangleShape(sf::Vector2f(size.x / 6, 30));
-		rectButtons[i].setFillColor(sf::Color(100, 100, 100));
-		rectButtons[i].setOutlineThickness(2.f);
-		rectButtons[i].setOutlineColor(sf::Color::Black);
+	sf::FloatRect buttonsRect = pass.getLocalBounds();
+	rectPass = sf::RectangleShape(sf::Vector2f(size.x / 6, 30));
+	rectPass.setFillColor(sf::Color(100, 100, 100));
+	rectPass.setOutlineThickness(2.f);
+	rectPass.setOutlineColor(sf::Color::Black);
 
-		buttons[i].setPosition(sf::Vector2f((i * size.x / 6) + (10 * size.x / 33), (6 * size.y / 16) + (size.y / 4) + 18));
-		rectButtons[i].setPosition(sf::Vector2f((i * size.x / 6) + (10 * size.x / 33) - size.x / 25, (6 * size.y / 16) + (size.y / 4) + 18));
-		w.draw(rectButtons[i]);
-		w.draw(buttons[i]);
-	}
+	pass.setPosition(sf::Vector2f());
+	rectPass.setPosition(sf::Vector2f());
+	w.draw(rectPass);
+	w.draw(pass);
 }
 
 bool game::checkValidity(game::Contract const& first, game::Contract const& second) {
